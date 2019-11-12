@@ -1,9 +1,10 @@
 ---
-title:  01Java内存区域与内存溢出异常
+title:  001Java内存区域与内存溢出异常
 tags: java虚拟机-0
 renderNumberedHeading: true
 grammar_cjkRuby: true
 ---
+[toc]
 
 ### 运行时数据区域
 > 把内存划分成不同的数据区，有其各自用途和创建和销毁时间	
@@ -80,8 +81,84 @@ grammar_cjkRuby: true
 优缺点对比
 - 句柄：reference中句柄地址稳定，对象被移动时，仅改变句柄中实际数据指针
 - 直接指针：速度更快，节省了一次指正定位的时间开销。
-### OutOfMemoryError异常
+### 实战：OutOfMemoryError异常
+本节目的
+- 验证各个运行时区域的存储内容
+- 遇到内存溢出异常时，根据异常信息判断哪个区域出现问题，以及如何处理
+
+[设置IDEAJVM运行参数](https://cloud.tencent.com/developer/article/1350309)
+IDEA (Run->Edit Configurations->VM Option)
+
+```启动参数记录
+//常见配置汇总 
+//堆设置 
+-Xms:初始堆大小 
+-Xmx:最大堆大小 
+-XX:NewSize=n:设置年轻代大小 
+-XX:NewRatio=n:设置年轻代和年老代的比值.如:为3,表示年轻代与年老代比值为1:3,年轻代占整个年轻代年老代和的1/4 
+-XX:SurvivorRatio=n:年轻代中Eden区与两个Survivor区的比值.注意Survivor区有两个.如:3,表示Eden:Survivor=3:2,一个Survivor区占整个年轻代的1/5 
+-XX:MaxPermSize=n:设置持久代大小
+//收集器设置 
+-XX:+UseSerialGC:设置串行收集器 
+-XX:+UseParallelGC:设置并行收集器 
+-XX:+UseParalledlOldGC:设置并行年老代收集器 
+-XX:+UseConcMarkSweepGC:设置并发收集器
+//垃圾回收统计信息 
+-XX:+PrintGC 
+-XX:+PrintGCDetails 
+-XX:+PrintGCTimeStamps 
+-Xloggc:filename
+//并行收集器设置 
+-XX:ParallelGCThreads=n:设置并行收集器收集时使用的CPU数.并行收集//线程数. 
+-XX:MaxGCPauseMillis=n:设置并行收集最大暂停时间 
+-XX:GCTimeRatio=n:设置垃圾回收时间占程序运行时间的百分比.公式为1/(1+n)
+//并发收集器设置 
+-XX:+CMSIncrementalMode:设置为增量模式.适用于单CPU情况. 
+-XX:ParallelGCThreads=n:设置并发收集器年轻代收集方式为并行收集时,使用的CPU数.并行收集线程数.
+
+```
 #### Java堆溢出
+问题：
+java堆中储存对象实例，只要不断创建对象实例，并保证不会进行垃圾回收，对象数量达到一定数量后就会产生内存溢出异常“java.lang.OutOfMemoryError:Java heap space”
+```
+/**限制Java堆大小20MB,且不可扩展
+*VM Args:-Xms20m-Xmx20m-XX:+HeapDumpOnOutOfMemoryError
+*@author hby
+*/
+public class HeapOOM{
+	static class OOMObject{
+	}
+	public static void main(String[]args){
+		List<OOMObject> list=new ArrayList<OOMObject>(){
+		while(true){
+			list.add(new OOMObject());
+		}
+	}
+}
+```
+解决：
+分清楚到底是内存泄漏还是内存溢出，内存泄漏需要掌握泄漏对象和GC引用链之间的信息。内存溢出，若对象必须都存在，需要扩大内存，或者减少对象生命周期和持有状态时长，减少内存消耗。
 #### 虚拟机栈和本地方法栈溢出
+- 线程请求的栈深度大于虚拟机所允许的的最大深度，出现StackOverFlowError异常。单线程下，无论是由于栈帧太大还是虚拟机栈容量太小，当内存无法分配时，只会出现StackOverFlowError异常。
+```
+/**
+     *VM Args:-Xss128k
+     *@author zzm
+     */
+    public class JavaVMStackSOF{
+        private int stackLength=1;
+        public void stackLeak(){
+            stackLength++;
+            stackLeak();
+        }
+        public static void main(String[]args)throws Throwable{
+            JavaVMStackSOF oom=new JavaVMStackSOF();
+            try{
+                oom.stackLeak();
+            }catch(Throwable e){
+                System.out.println("stack length:"+oom.stackLength()
+                throw e;
+            }}}
+```
 #### 方法区和运行时常量池溢出
 #### 本机直接内存溢出
