@@ -139,9 +139,13 @@ public class HeapOOM{
 解决：
 分清楚到底是内存泄漏还是内存溢出，内存泄漏需要掌握泄漏对象和GC引用链之间的信息。内存溢出，若对象必须都存在，需要扩大内存，或者减少对象生命周期和持有状态时长，减少内存消耗。
 #### 虚拟机栈和本地方法栈溢出
-- 线程请求的栈深度大于虚拟机所允许的的最大深度，出现StackOverFlowError异常。单线程下，无论是由于栈帧太大还是虚拟机栈容量太小，当内存无法分配时，只会出现StackOverFlowError异常。
+问题
+- 线程请求的栈深度大于虚拟机所允许的的最大深度，出现StackOverFlowError异常。单线程下，无论是由于栈帧太大还是虚拟机栈容量太小，当内存无法分配时，只会出现StackOverFlowError异常。(stack length:2402
+Exception in thread"main"java.lang.StackOverflowError
+at org.fenixsoft.oom.VMStackSOF.leak(VMStackSOF.java(20))
 ```
-/**
+     /**
+	 *虚拟机栈溢出
      *VM Args:-Xss128k
      *@author zzm
      */
@@ -160,5 +164,102 @@ public class HeapOOM{
                 throw e;
             }}}
 ```
+- 不限于单线程时，不停建立线程时可能产生OutOfMemeroyError异常。(java.lang.OutOfMemoryError:unable to create new native thread)
+```
+    /**
+     *VM Args:-Xss2M(设置最小堆容量为2M,稍微偏大)
+     *@author hby
+     */
+    public class JavaVMStackOOM{
+        private void dontStop(){
+            while(true){
+            }
+	    }
+        public void stackLeakByThread(){
+            while(true){
+                Thread thread=new Thread(new Runnable(){
+                    @Override
+                    public void run(){
+                        dontStop();
+                    }});
+                thread.start();
+            }
+		}
+        public static void main(String[]args)throws Throwable{
+            JavaVMStackOOM oom=new JavaVMStackOOM();
+            oom.stackLeakByThread();
+        }
+    }
+```
+解决
+如果是建立过多线程导致内存溢出，在不能减少线程数或者更换64位虚拟机时，只能通过减少最大堆和减少栈容量换取更多线程。
 #### 方法区和运行时常量池溢出
+问题
+- 运行时常量池存放不可变常量过多会出现溢出异常。String.intern( )是Native方法，将不存在运行时常量池的String字符串放入池中。（java.lang.OutOfMemoryError：PermGen space）
+```
+    /**
+     * 设置方法区大小
+     * VM Args:-XX:PermSize=10M-XX:MaxPermSize=10M
+     *
+     * @author hby
+     */
+    public class RuntimeConstantPoolOOM {
+        public static void main(String[] args) {
+            List<String> list = new ArrayList<String>();
+            int i = 0;
+            while (true) {
+                list.add(String.valueOf(i++).intern());
+            }
+        }
+    }
+```
+- 方法区存放Class相关信息，如类名，访问修饰符，常量池，字段描述，方法描述等。CGLib字节码增强在很多框架中使用到，增强的类越多，需要更大的方法区存放保证动态Class可以加载到内存。(java.lang.OutOfMemoryError:PermGen space)
+```
+    /**
+     * VM Args:-XX:PermSize=10M-XX:MaxPermSize=10M
+     *
+     * @author hby
+     */
+    public class JavaMethodAreaOOM {
+        public static void main(String[] args) {
+            while (true) {
+                Enhancer enhancer = new Enhancer();
+                enhancer.setSuperclass(OOMObject.class);
+                enhancer.setUseCache(false);
+                enhancer.setCallback(new MethodInterceptor() {
+                    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+                        return proxy.invokeSuper(obj, args);
+                    }
+                });
+                enhancer.create();
+            }
+        }
+
+        static class OOMObject {
+        }
+    }
+```
+解决
+在经常动态生成大量Class的应用中，需要注意类的垃圾回收状况
 #### 本机直接内存溢出
+- 直接内存溢出，在Heap Dump中不会看见明显的异常(java.lang.OutOfMemoryError
+at sun.misc.Unsafe.allocateMemory:Native Method)
+```
+/**
+     * VM Args:-Xmx20M-XX:MaxDirectMemorySize=10M
+     * 直接内存容量通过-XX:MaxDirectMemorySize指定，默认和Java堆最大值一样
+     * @author hby
+     */
+    public class DirectMemoryOOM {
+        private static final int_1MB=1024*1024;
+
+        public static void main(String[] args) throws Exception {
+            Field unsafeField = Unsafe.class.getDeclaredFields()[0];
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            while (true) {
+                unsafe.allocateMemory(_1MB);
+            }
+        }
+    }
+```
