@@ -48,7 +48,7 @@ grammar_cjkRuby: true
 > or
 > $ sudo systemctl start docker
 #### image文件
-- 介绍：Docker把应用程序和依赖打包到镜像文件中，通过镜像文件可以生成多个同时运行的镜像实例。image文件是一个二进制的文件，通过一个image生成另外一个image，理解为继承关系。
+- 介绍：Docker把应用程序和依赖打包到镜像文件中，通过镜像文件可以生成多个同时运行的镜像实例。image文件是一个二进制的文件，通过一个image生成另外一个image，理解为继承关系。定制镜像文件，也基于别人的进行加工。
 - 命令
 ```
 #列出本机所有的images文件
@@ -99,6 +99,7 @@ WORKDIR /app # 指定接下来的工作路径为/app
 RUN ["npm", "install"] # 在/app目录下，运行npm install命令安装依赖
 EXPOSE 3000 # 将容器 3000 端口暴露下来，允许外部连接这个端口
 ```
+![enter description here](./images/1574749634576.png)
 ##### 3.创建image文件
 ```
 $ docker build -t koa-demo .
