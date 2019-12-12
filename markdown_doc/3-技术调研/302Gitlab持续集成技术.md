@@ -9,8 +9,10 @@ grammar_cjkRuby: true
 持续集成是一种软件开发实践，即团队开发成员经常集成他们的工作，通常每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试)来验证，从而尽快地发现集成错误。许多团队发现这个过程可以大大减少集成的问题，让团队能够更快的开发内聚的软件。—— Martin Fowler
 
 ### CI/CD——持续的软件开发方法
-	持续的软件开发方法基于自动执行脚本，以最大限度地减少在开发应用程序时引入错误的可能性。 从新代码的开发到部署，它们需要较少的人为干预甚至根本不需要干预。
+持续的软件开发方法基于自动执行脚本，以最大限度地减少在开发应用程序时引入错误的可能性。 从新代码的开发到部署，它们需要较少的人为干预甚至根本不需要干预。
+
 它涉及在每次小迭代中不断构建，测试和部署代码更改，从而减少基于有缺陷或失败的先前版本开发新代码的机会。
+
 有三种主要方法，每种方法都根据最适合的策略进行应用
 - Continuous Integration 持续集成
 - Continuous Delivery 持续交付
@@ -18,18 +20,18 @@ grammar_cjkRuby: true
 
 ### CI/CD
 #### 概念
-	CI(Continuous Integeration):持续集成，频繁将代码集成到主干时，保证代码质量，让Bug更容易发现和改正。
+CI(Continuous Integeration):持续集成，频繁将代码集成到主干时，保证代码质量，让Bug更容易发现和改正。
 CD(Continuous Delivery):频繁将系统的新版本交给质量团队或用户，以供评审，保证不管如何更新，能随时交付。
 CD(Continuous Deployment):持续部署，代码通过评审以后，自动部署到生产环境，进入生产阶段。
 
 #### 策略
-	谈到CI/CD，不免想到Gitlab + Jenkins + Docker等一些列优秀的工具，Jenkins以其丰富的插件及灵活配置已经非常好的满足我们日常工作中的CI/CD需求，来打通了开发到部署到整个生命周期，完成持续集成持续构建。 
+谈到CI/CD，不免想到Gitlab + Jenkins + Docker等一些列优秀的工具，Jenkins以其丰富的插件及灵活配置已经非常好的满足我们日常工作中的CI/CD需求，来打通了开发到部署到整个生命周期，完成持续集成持续构建。 
 在Gitlab 也是具有一套CI/CD到框架，通过简单的注册Gitlab Runner，根据业务测试部署需求撰写 .gitlab-ci.yml文件，即可轻松的实现CI/CD，无需多余的工具介入，方便快捷
 
 
 ### GitLab CI/CD
 #### 简介
-	Gitlab CI/CD是一个Gitlab自带的对软件进行持续构建、测试、部署以确保软件符合规范，减少软件中程序错误的源代码测试系统。在对源代码进行集成测试时需要在源代码根目录下添加.gitlab-ci.yml文件，该文件指定源代码执行环境(docker镜像，环境变量，缓存等)和执行脚本（构建，测试，部署脚本等）。对每一个commit操作，Gitlab基于.gitlab-ci.yml配置，构建出一个个对源代码测试的Job，这些Job最终运行在Gitlab关联的Gitlab Runner上。
+Gitlab CI/CD是一个Gitlab自带的对软件进行持续构建、测试、部署以确保软件符合规范，减少软件中程序错误的源代码测试系统。在对源代码进行集成测试时需要在源代码根目录下添加.gitlab-ci.yml文件，该文件指定源代码执行环境(docker镜像，环境变量，缓存等)和执行脚本（构建，测试，部署脚本等）。对每一个commit操作，Gitlab基于.gitlab-ci.yml配置，构建出一个个对源代码测试的Job，这些Job最终运行在Gitlab关联的Gitlab Runner上。
 	
 流程图
 ![enter description here](./images/1576141567559.png)
@@ -82,8 +84,8 @@ Runner可以分布在不同的主机上，同一个主机上也可以有多个Ru
 
 #### yml文件标签介绍
 ##### .gitlab-ci.yml文件
-    从7.12版本开始，GitLab CI使用YAML文件(.gitlab-ci.yml)来管理项目配置。该文件存放于项目仓库的根目录，并且包含了你的项目如何被编译的描述语句。YAML文件使用一系列约束叙述定义了Job启动时所要做的事情。
-	.gitlab-ci.yml文件中定义pipline，stages，jobs，以及运行每个Job所执行的脚本。
+  从7.12版本开始，GitLab CI使用YAML文件(.gitlab-ci.yml)来管理项目配置。该文件存放于项目仓库的根目录，并且包含了你的项目如何被编译的描述语句。YAML文件使用一系列约束叙述定义了Job启动时所要做的事情。
+.gitlab-ci.yml文件中定义pipline，stages，jobs，以及运行每个Job所执行的脚本。
 	
 ##### .gitlab-ci.yml实例	
 - 文件所在位置是项目的根目录。
