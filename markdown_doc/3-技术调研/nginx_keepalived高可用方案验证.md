@@ -1,6 +1,6 @@
 ---
-title: nginx_keepalived高可用方案验证
-tags: nginx
+title: 3001nginx_keepalived高可用方案验证
+tags: nginx-3
 renderNumberedHeading: true
 grammar_cjkRuby: true
 ---
