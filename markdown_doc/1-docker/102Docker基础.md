@@ -75,6 +75,14 @@ Registry Mirrors: https://dockerhub.azk8s.cn/
 ![mac配置阿里云镜像加速器](./images/1575443816458.png)
 	
 ### 基本使用
-#### 镜像使用
+#### 镜像
+- 从仓库获取镜像,下载过程中会输出获取镜像的每一层信息 **docker pull image_name:version** 
+
+- 显示本地已有的镜像,展示字段 REPOSITORY(来自那个仓库)、TAG(镜像的标记)、IMAGE ID(唯一ID)、CREATED(创建时间)、VIRTUAL SIZE(镜像大小) **docker images** 
+- 创建镜像有几方法：更新已有的镜像、通过Dockerfile创建、通过本地文件系统创建
+	- 使用基本镜像启动容器，进入容器 **docker run -it image_id/image_name /bin/bash**，记住容器id，修改好退出容器 **exit**，使用 **docker commit -m "commit info" -a "commitor name" container_id new_image_name** 提交更新后的副本。
+	- 使用Dockerfile创建镜像，每条指令都创建镜像的一层，具体会后面详解。通过**docker build -t image_name .** 在当前目录下查找Dockerfile，并把目录下的内容打包到镜像中。其中 **-t 标记添加tag**
+	- 
+- 修改镜像的tag **docker tag image_id image_new_tag**
 #### 容器使用
 #### 仓库使用
