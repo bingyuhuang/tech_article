@@ -93,4 +93,54 @@ Registry Mirrors: https://dockerhub.azk8s.cn/
 7.*移除镜像*：**docker rmi image_name/image_id** 注意在镜像删除前要先删除依赖于此镜像的容器 **docker rm -f container**
 
 #### 容器使用
+容器是独立运行的一个或一组应用，以及他们的运行态环境
+1.*进入容器:* **docker attach container_name** (先启动容器，然后使用attach)
+2.*导出和导入容器:* 
+- 导出：**docker export 容器id > name.tar**
+- 导入：**docker import 容器快照url**
+
+3.*删除容器:* **docker rm -f 容器id/容器名**
+4.*查看所有容器*：**docker ps -a** (-a 展示所有运行和停止的容器，去掉-a只展示运行的容器)
+5.*通过镜像启动容器:* **docker run -it image_id/image_name /bin/bash**
+6.*守护态运行容器:* **docker run -d image_id/image_name /bin/bash** (-d 表示容器在后台以守护态运行)
+7.*终止/重新启动容器:* **docker stop/start/restart container_id**
 #### 仓库使用
+仓库(Repository)是集中存放容器的地方
+注册服务器(Registry)是管理仓库的服务器
+##### Docker Hub
+[Docker hub](https://hub.docker.com/)是官方维护的公共仓库
+1.登录
+```
+docker login
+#接着输入用户名、密码登录，如果没有需要在官网上注册一个
+```
+2.基本操作
+```
+#查找官方仓库中的镜像
+docker search image_name
+#下载镜像到本地
+docker pull image_name
+#用户登录后可推送镜像到Docker Hub
+docker push image_name
+```
+3.自动创建
+Docker Hub跟踪目标网站(Github)的项目，一旦项目更新执行创建。
+##### 私有仓库
+
+##### 配置文件
+提供了仓库的模板（flavor），可以直接用来进行开发或生产部署
+模板
+```
+在 config_sample.yml 文件中，可以看到一些现成的模板段：
+	common：基础配置
+	local：存储数据到本地文件系统
+	s3：存储数据到 AWS S3 中
+	dev：使用 local 模板的基本配置
+	test：单元测试使用
+	prod：生产环境配置（基本上跟s3配置类似）
+	gcs：存储数据到 Google 的云存储
+	swift：存储数据到 OpenStack Swift 服务
+	glance：存储数据到 OpenStack Glance 服务，本地文件系统为后备
+	glance-swift：存储数据到 OpenStack Glance 服务，Swift 为后备
+	elliptics：存储数据到 Elliptics key/value 存储
+```
