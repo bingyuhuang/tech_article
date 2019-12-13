@@ -76,13 +76,21 @@ Registry Mirrors: https://dockerhub.azk8s.cn/
 	
 ### 基本使用
 #### 镜像使用
-- 从仓库获取镜像,下载过程中会输出获取镜像的每一层信息 **docker pull image_name:version** 
+1.*获取镜像*: 下载过程中会输出获取镜像的每一层信息 **docker pull image_name:version** 
 
-- 显示本地已有的镜像,展示字段 REPOSITORY(来自那个仓库)、TAG(镜像的标记)、IMAGE ID(唯一ID)、CREATED(创建时间)、VIRTUAL SIZE(镜像大小) **docker images** 
-- 创建镜像有几方法：更新已有的镜像、通过Dockerfile创建、通过本地文件系统创建
-	- 使用基本镜像启动容器，进入容器 **docker run -it image_id/image_name /bin/bash**，记住容器id，修改好退出容器 **exit**，使用 **docker commit -m "commit info" -a "commitor name" container_id new_image_name** 提交更新后的副本。
-	- 使用Dockerfile创建镜像，每条指令都创建镜像的一层，具体会后面详解。通过**docker build -t image_name .** 在当前目录下查找Dockerfile，并把目录下的内容打包到镜像中。其中 **-t 标记添加tag**
-	- 
-- 修改镜像的tag **docker tag image_id image_new_tag**
+2.*列出本地已有的镜像*: 展示字段 REPOSITORY(来自那个仓库)、TAG(镜像的标记)、IMAGE ID(唯一ID)、CREATED(创建时间)、VIRTUAL SIZE(镜像大小) **docker images** 
+3.*创建镜像*：更新已有的镜像、通过Dockerfile创建、通过本地文件系统创建
+- 使用基本镜像启动容器，进入容器 **docker run -it image_id/image_name /bin/bash**，记住容器id，修改好退出容器 **exit**，使用 **docker commit -m "commit info" -a "commitor name" container_id new_image_name** 提交更新后的副本。
+- 使用Dockerfile创建镜像，每条指令都创建镜像的一层，具体会后面详解。通过**docker build -t image_name .** 在当前目录下查找Dockerfile，并把目录下的内容打包到镜像中。其中 **-t 标记添加tag**
+- 本地系统文件导入 **docker import - image_name**
+
+4.*修改镜像的tag*: **docker tag image_id image_new_tag**
+5.*上传镜像*： **docker push image_name**
+6.*存出或载入Docker镜像*：
+- 导出文件到本地：**docker save -o image.tar image_name**
+- 从导出的本地文件中再导入到本地镜像库：**docker load --inpur image.tar**
+
+7.*移除镜像*：**docker rmi image_name/image_id** 注意在镜像删除前要先删除依赖于此镜像的容器 **docker rm -f container**
+
 #### 容器使用
 #### 仓库使用
