@@ -75,7 +75,7 @@ Registry Mirrors: https://dockerhub.azk8s.cn/
 ![mac配置阿里云镜像加速器](./images/1575443816458.png)
 	
 ### 基本使用
-#### 镜像
+#### 镜像使用
 - 从仓库获取镜像,下载过程中会输出获取镜像的每一层信息 **docker pull image_name:version** 
 
 - 显示本地已有的镜像,展示字段 REPOSITORY(来自那个仓库)、TAG(镜像的标记)、IMAGE ID(唯一ID)、CREATED(创建时间)、VIRTUAL SIZE(镜像大小) **docker images** 
