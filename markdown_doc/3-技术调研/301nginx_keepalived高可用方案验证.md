@@ -385,16 +385,6 @@ Nginx为什么会停止响应呢？有以下几种情况：
 
 
 ### 终极版本
-先决条件：
-
-1.需要在宿主机上执行ipvsadm(LVS虚拟服务器的管理工具)命令，如果这两个命令不存在，按照下面的命令先安装：
-```
-centos: yum install ipvsadm -y
-ubuntu: apt-get install ipvsadm -y
-```
-2.查看宿主机的网卡名称
-
-3.联系网络管理员分配虚拟IP地址
 #### 下载centos基础镜像
 docker pull centos:7.6.1810
 
@@ -516,8 +506,20 @@ docker run --privileged --network host -e host=ip -e SERVERS="server ip1; server
 docker run --privileged --network host -e host=ip -e SERVERS="server ip1; server ip2;" -e KEEPALIVED_ROUTE_ID=backup -e KEEPALIVED_STATE=BACKUP -e KEEPALIVED_INTERFACE=en0 -e KEEPALIVED_PRIORITY=99 -e KEEPALIVED_VIP=vip nginx_keepalived_ha
 
 ```
-注意事项：
-1.在做服务部署前需要分配一个VIP
-2.在部署前需要提前知道宿主机的网卡名称
-3.使用devops则需要些编排文件
+#### 注意事项：
+1.需要在宿主机上执行ipvsadm(LVS虚拟服务器的管理工具)命令，如果这两个命令不存在，按照下面的命令先安装：
+```
+centos: yum install ipvsadm -y
+
+ubuntu: apt-get install ipvsadm -y
+```
+2.在做服务部署前需要分配一个VIP
+3.在部署前需要提前知道宿主机的网卡名称
+4.使用devops则需要些编排文件
+5.devops部署
+```
+sudo docker save -o nginx-keepalived-ha-v1.tar ampregistry:5000/nginx-keepalived-ha-v1
+
+sudo devops-svcctl load -p nginx-keepalived-ha-v1.tar 
+```
 
