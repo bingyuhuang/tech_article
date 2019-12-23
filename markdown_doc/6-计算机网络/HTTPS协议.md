@@ -1,5 +1,5 @@
 ---
-title: 606HTTPS协议
+title: HTTPS协议
 tags: 计算机网络, 应用层
 renderNumberedHeading: true
 grammar_cjkRuby: true
