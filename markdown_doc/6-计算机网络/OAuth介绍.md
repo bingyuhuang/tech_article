@@ -15,6 +15,10 @@ grammar_cjkRuby: true
 - [x] [6.springboot 与oauth2集成](https://blog.csdn.net/chenyongtu110/article/details/82912306)
 - [x] [7.spring-security](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 - [x] [8.OAuth2学习之路](https://my.oschina.net/jast90?q=oauth)
+- [ ] [9.阮一峰理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
+- [ ] [10.[认证 & 授权] 1. OAuth2授权](https://www.cnblogs.com/linianhui/p/oauth2-authorization.html)
+
+
 
 [toc]
 
@@ -79,8 +83,33 @@ OAuth 是由 Blaine Cook、Chris Messina、Larry Halff 及 David Recordon 共同
 2.分析如何在代码中使用url的地方使用令牌，或许需要写一个切面？
 
 #### 服务器侧行为
-本次场景的角色是消费者，如果需要搭建OAuth服务，需要参看链接spring boot如何整合OAuth、spring-security、OAuth2学习之路自行搭建一个开发授权服务。
+本次场景的角色是消费者，如果需要搭建OAuth服务，需要参看链接spring boot如何整合OAuth、spring-security、OAuth2学习之路[自行搭建](https://tools.ietf.org/html/rfc6749)一个开发授权服务。
 
 ### solution
-Devops平台wiki文档：
+#### resource
+1.Devops平台wiki文档:
 [OAuth2 用户认证支持](https://wiki.megvii-inc.com/pages/viewpage.action?pageId=40608932#id-4.3.6.2OAuth2%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E6%94%AF%E6%8C%81-5OAuth2%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B)
+2.Core侧的Swagger服务V5:
+[Core Service](http://10.122.100.7:8080/doc/v5/#/)
+
+#### step
+1.开启OAuth服务：core侧编排文件 运行命令 --withOAuth2
+![运行命令](./images/1577171954195.png)
+
+2.创建用户：devops使用内建超级账户登录，在用户管理处创建
+
+![用户管理](./images/1577172336560.png)
+
+![创建用户](./images/1577172392037.png)
+
+3.创建用户后获取token: 
+![用户鉴权api](./images/1577172501997.png)
+
+4.使用'token;
+```
+curl -i -X GET "http://ip:8080/v5/users" -H "accept: application/json"  -H "Authorization: Bearer <token>"
+```
+
+5.token有效期为10分钟，使用刷新接口对token进行刷新，重新获取
+
+6.代码修改，目前所有的core侧服务使用Feign的方法调用了接口，倘若需要添加Head的话，能想到的方案是通过切面拦截request，设置header，具体实现方案需要具体看。
