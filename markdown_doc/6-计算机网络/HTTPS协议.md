@@ -8,6 +8,7 @@ grammar_cjkRuby: true
 - [x] [HTTPS协议](https://blog.csdn.net/qq_36711489/article/details/92074350)
 - [ ] [HTTP和HTTPS协议，看一篇就够了](https://blog.csdn.net/xiaoming100001/article/details/81109617)
 - [ ] [简书-https协议](https://www.jianshu.com/p/f9b8a3e62af1)
+- [ ] [wiki-HTTPS原理剖析](https://wiki.megvii-inc.com/pages/viewpage.action?pageId=126223027)
 
 [toc]
 ## 概念
@@ -28,3 +29,17 @@ HTTPS  = HTTP + SSL/TLS
 - SSL加密和解密增加了额计算资源消耗
 - 同样网络环境下，通信变慢
 ## 配置
+## 方案
+ [wiki-devops平台https证书管理](https://wiki.megvii-inc.com/pages/viewpage.action?pageId=34887052)
+ 
+1.使用证书的两种方式：
+- 用户手动上传HTTPS的*.crt和*.key文件，可能需要自行生成。
+- devops资料显示;
+>若集群拓扑结构发生变化，可以手工生成DevOps 默认证书，在DevOps Manager所在节点，输入：sudo devops-manager -replaceBuiltinHttpsCert -genHttpsCert   , 然后到集群页面点击配置同步，重启应用后就会使用新的证书。
+
+2.devops设置开启http
+![挂载http证书](./images/1577173123760.png)
+3.重新部署应用
+4.修改nginx的配置
+![nginx配置](./images/1577173043898.png)
+5.yml文件修改 enable_https_cert:true
