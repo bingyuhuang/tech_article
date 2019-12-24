@@ -102,14 +102,12 @@ OAuth 是由 Blaine Cook、Chris Messina、Larry Halff 及 David Recordon 共同
 
 ![创建用户](./images/1577172392037.png)
 
-3.创建用户后获取token: 
-![用户鉴权api](./images/1577172501997.png)
+3.创建用户后获取token，更新token的API，token有效期过期，使用刷新接口对token进行刷新，重新获取
+![enter description here](./images/1577175577621.png)
 
 4.使用'token;
 ```
 curl -i -X GET "http://ip:8080/v5/users" -H "accept: application/json"  -H "Authorization: Bearer <token>"
 ```
 
-5.token有效期为10分钟，使用刷新接口对token进行刷新，重新获取
-
-6.代码修改，目前所有的core侧服务使用Feign的方法调用了接口，倘若需要添加Head的话，能想到的方案是通过切面拦截request，设置header，具体实现方案需要具体看。
+5.代码修改，目前所有的core侧服务使用Feign的方法调用了接口，倘若需要添加Head的话，能想到的方案是通过切面拦截request，设置header，具体实现方案需要具体看[Feign传递请求头信息](https://blog.csdn.net/AaronSimon/article/details/82711036)、[Feign动态设置Header](https://www.jianshu.com/p/4d3cede9bc88)、[SpringCloud声明式服务调用Feign](https://segmentfault.com/a/1190000012860519)。
