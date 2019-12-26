@@ -43,3 +43,18 @@ HTTPS  = HTTP + SSL/TLS
 4.修改nginx的配置
 ![nginx配置](./images/1577173043898.png)
 5.yml文件修改 enable_https_cert:true
+
+## 步骤
+
+1. 打开前端devops的挂载http，后面通过编排文件添加参数 （enable_https_cert: true）
+
+![devops修改实例](./images/1577351781950.png)
+
+2.修改前端nginx.config的配置文件
+```
+# 1.文件在容器对应路径下
+ssl_certificate /etc/ssl/devops/https_cert_crt;
+ssl_certificate_key /etc/ssl/devops/https_cert_key;
+# 2. 监听的端口后面添加ssl
+```
+3.重新jekins部署前端代码
