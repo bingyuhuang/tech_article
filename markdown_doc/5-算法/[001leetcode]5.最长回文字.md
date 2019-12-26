@@ -1,5 +1,5 @@
 ---
-title: [001LeetCode] 5. Longest Palindromic Substring 最长回文子串
+title: 001LeetCode 5. Longest Palindromic Substring 最长回文子串
 tags: LeetCode-0
 renderNumberedHeading: true
 grammar_cjkRuby: true
