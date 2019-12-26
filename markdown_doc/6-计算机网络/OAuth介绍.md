@@ -111,3 +111,131 @@ curl -i -X GET "http://ip:8080/v5/users" -H "accept: application/json"  -H "Auth
 ```
 
 5.代码修改，目前所有的core侧服务使用Feign的方法调用了接口，倘若需要添加Head的话，能想到的方案是通过切面拦截request，设置header，具体实现方案需要具体看[Feign传递请求头信息](https://blog.csdn.net/AaronSimon/article/details/82711036)、[Feign动态设置Header](https://www.jianshu.com/p/4d3cede9bc88)、[SpringCloud声明式服务调用Feign](https://segmentfault.com/a/1190000012860519)。
+
+#### action
+1.devops侧
+- 超级账户->用户管理->创建用户，使用的权限是external_user (获取到oauthAccessToken、oauthRefreshToken)
+- 超级账户->oauth2查看授权(获取到oauthClientId、oauthClientSecret)
+
+2.园区代码侧
+- properties配置文件
+```application-qa.properties
+#OAuth认证的API
+oauth.getTokenInfoUrl = http://${CORE_HOST:<ip>}:5432/api/v1/oauth2/info
+oauth.refreshTokenUrl = http://${CORE_HOST:<ip>}:5432/api/v1/oauth2/token
+oauth.redirectUrl = http://${CORE_HOST:<ip>}:5432/api/v1/oauth2/mock_callback
+```
+- adapter.config表格添加环境变量key-value
+```key
+oauthClientId
+oauthAccessToken
+oauthRefreshToken
+oauthClientSecret
+```
+具体取值
+3.代码实现
+- Feign拦截器
+```FeignAuthRequestInterceptor
+@Configuration
+@Slf4j
+public class FeignAuthRequestInterceptor {
+
+    @Resource
+    private FeignAuthRequestService feignAuthRequestService;
+
+    /**
+     * OAuth信息Header的值的前缀
+     */
+    private static final String OAUTH_VALUE_PREFIX = "Authorization";
+
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return new RequestInterceptor() {
+            @Override
+            public void apply(RequestTemplate template) {
+                // request设置OAuth请求头
+                template.header(OAUTH_VALUE_PREFIX, "Bearer " + feignAuthRequestService.getToken());
+            }
+        };
+    }
+
+}
+```
+- 获取token，以及考虑到token过期重新生成token
+```FeignAuthRequestService
+@Service
+@Slf4j
+public class FeignAuthRequestService {
+
+    @Value("${oauth.getTokenInfoUrl}")
+    private String getTokenInfoUrl;
+
+    @Value("${oauth.refreshTokenUrl}")
+    private String refreshTokenUrl;
+
+    @Value("${oauth.redirectUrl}")
+    private String redirectUrl;
+
+    @RoutingInjected
+    private ActionService actionService;
+
+    public String getToken() {
+        try {
+            // getTokenInfo 判断过期时间是否大于0
+            String accessToken = actionService.getConfigValue(ConfigEnum.OAUTH_ACCESS_TOKEN.getMsg());
+            if (getExpiresTime(accessToken) > 0) {
+                return accessToken;
+            } else {
+                return getNewToken();
+            }
+        } catch (Exception e) {
+            log.info("getToken error:", e);
+            if (e instanceof BusinessException) {
+                throw new BusinessException(((BusinessException) e).getErrorCode(), ((BusinessException) e).getErrorMsg());
+            } else {
+                throw new BusinessException(BusinessExceptionEnum.WRONG_PARAMETER, "token获取失败");
+            }
+        }
+
+    }
+
+    /**
+     * token过期获取新的token
+     * 并把对应环境变量进行修改
+     *
+     * @return
+     */
+    private String getNewToken() throws IOException {
+        String clientId = actionService.getConfigValue(ConfigEnum.OAUTH_CLIENT_ID.getMsg());
+        String clientSecret = actionService.getConfigValue(ConfigEnum.OAUTH_CLIENT_SECRET.getMsg());
+        String refreshToken = actionService.getConfigValue(ConfigEnum.OAUTH_REFRESH_TOKEN.getMsg());
+
+        String param = "?client_id=" + clientId + "&client_secret=" +
+                clientSecret + "&grant_type=refresh_token&redirect_uri=" + "&refresh_token=" + refreshToken;
+        ResponseResult response = HttpClient4Util.post(refreshTokenUrl + param, "", null);
+        JSONObject jsonObject = JSON.parseObject(response.getData());
+        String accessNewToken = jsonObject.getString("access_token");
+        String refreshNewToken = jsonObject.getString("refresh_token");
+        actionService.updateConfigValue(ConfigEnum.OAUTH_ACCESS_TOKEN.getMsg(), accessNewToken);
+        actionService.updateConfigValue(ConfigEnum.OAUTH_REFRESH_TOKEN.getMsg(), refreshNewToken);
+        return accessNewToken;
+    }
+
+    /**
+     * 获取OAuth的获取时间
+     *
+     * @param token
+     * @return
+     * @throws IOException
+     */
+    private Integer getExpiresTime(String token) throws IOException {
+        ResponseResult response = HttpClient4Util.post(getTokenInfoUrl + "?code=" + token, "", null);
+        JSONObject jsonObject = JSON.parseObject(response.getData());
+        return jsonObject.getInteger("expires_in");
+    }
+}
+```
+- 调用core侧，FeignClinet修改
+```ActionFeign
+@FeignClient(name="action",url = "${core.apiServiceUrlV5}", configuration = FeignAuthRequestInterceptor.class)
+```
