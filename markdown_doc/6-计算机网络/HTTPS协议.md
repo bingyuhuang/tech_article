@@ -58,3 +58,15 @@ ssl_certificate_key /etc/ssl/devops/https_cert_key;
 # 2. 监听的端口后面添加ssl
 ```
 3.重新jekins部署前端代码
+4.解决不安全链接 
+- 描述
+```
+Failed to construct 'WebSocket': An insecure WebSocket connection may not be initiated from a page loaded over HTTPS.
+```
+- 方案：
+[1.无法通过HTTPS加载的页面启动不安全的WebSocket连接](https://blog.csdn.net/weixin_30693683/article/details/95139180)
+[2.NGINX反向代理websocket并启用SSL](https://stackoverflow.com/questions/12102110/nginx-to-reverse-proxy-websockets-and-enable-ssl-wss)
+- 步骤：
+1.webSocket几个链接
+2.nginx 添加location
+3.前端ws修改为wss
