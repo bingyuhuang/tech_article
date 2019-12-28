@@ -69,4 +69,39 @@ Failed to construct 'WebSocket': An insecure WebSocket connection may not be ini
 - 步骤：
 1.webSocket几个链接
 2.nginx 添加location
-3.前端ws修改为wss
+- 配置参考
+```
+location / {
+    # redirect all HTTP traffic to localhost:8080
+    proxy_pass http://localhost:8080;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    # WebSocket support
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+}
+```
+- nginx的配置正则表达式
+- ~* 为不区分大小写匹配
+```
+# action 1 匹配/passTodayComWebsocket/
+location /passTodayComWebsocket/ {
+        proxy_pass http://$host:2225;
+        proxy_pass_header Referer;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        # WebSocket support
+		proxy_read_timeout     60;
+        proxy_connect_timeout  60;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+prob1.进首页还是ws
+prob2.ERR_CONNECTION_TIMED_OUT
+```
+3.前端ws修改为wss:[How to Proxy WSS WebSockets with NGINX](https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-proxy-wss-websockets-with-nginx/)
