@@ -107,4 +107,5 @@ prob2.ERR_CONNECTION_TIMED_OUT
 ![nginx配置](./images/1577521603744.png)
 
 ![websocket链接不上](./images/1577521556024.png)
+方案：[前端配合修改](https://stackoverflow.com/questions/41381444/websocket-connection-failed-error-during-websocket-handshake-unexpected-respon)
 3.前端ws修改为wss:[How to Proxy WSS WebSockets with NGINX](https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-proxy-wss-websockets-with-nginx/)
