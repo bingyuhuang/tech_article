@@ -103,9 +103,68 @@ location /passTodayComWebsocket/ {
     }
 prob1.进首页还是ws
 prob2.ERR_CONNECTION_TIMED_OUT
+
+# action 2.配置修改
+ location ~*/*Websocket/ {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_pass http://$host:2225;
+        proxy_http_version 1.1;
+        proxy_ssl_certificate     /etc/ssl/devops/https_cert_crt;
+        proxy_ssl_certificate_key /etc/ssl/devops/https_cert_key;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+
+    location ~/websocket/ {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_pass http://$host:2228;
+        proxy_http_version 1.1;
+        proxy_ssl_certificate     /etc/ssl/devops/https_cert_crt;
+        proxy_ssl_certificate_key /etc/ssl/devops/https_cert_key;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
 ```
 ![nginx配置](./images/1577521603744.png)
 
 ![websocket链接不上](./images/1577521556024.png)
 方案：[前端配合修改](https://stackoverflow.com/questions/41381444/websocket-connection-failed-error-during-websocket-handshake-unexpected-respon)
 3.前端ws修改为wss:[How to Proxy WSS WebSockets with NGINX](https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-proxy-wss-websockets-with-nginx/)
+
+- websocket问题修复action
+1.创建新的conf文件
+```websocket.conf
+server {
+    listen 3335 ssl;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $host;
+    proxy_ssl_certificate     /etc/ssl/devops/https_cert_crt;
+    proxy_ssl_certificate_key /etc/ssl/devops/https_cert_key;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    location / {
+        proxy_pass http://$host:2225;
+    }
+
+    location ^~ /structure/overview/ {
+        proxy_pass http://$host:2228;
+    }
+}
+
+```
+2.前端创建websocket 连接
+- ws修改成wss
+- 端口号映射成3335
+
+3.最后修复问题ERR_CONNECTION_TIMED_OUT，定位是端口号没有进行映射，之前放在8200下的，通过'wss://ip:8888/recognitionListWebsocket/{uuid}'应该能实现访问的。
+
+4.工具
+- [正则表达式测试工具](https://c.runoob.com/front-end/854)
+- [websocket在线测试工具](http://coolaf.com/tool/chattest)
+
+到此安全漏洞修复完成，特别感谢liutianwei和guanxipeng两位小哥哥耐心指导[笔芯~]
