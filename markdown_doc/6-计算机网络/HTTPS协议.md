@@ -9,6 +9,7 @@ grammar_cjkRuby: true
 - [ ] [HTTP和HTTPS协议，看一篇就够了](https://blog.csdn.net/xiaoming100001/article/details/81109617)
 - [ ] [简书-https协议](https://www.jianshu.com/p/f9b8a3e62af1)
 - [ ] [wiki-HTTPS原理剖析](https://wiki.megvii-inc.com/pages/viewpage.action?pageId=126223027)
+- [ ] [nginx反向代理WebSocket](https://www.xncoding.com/2018/03/12/fullstack/nginx-websocket.html)
 
 [toc]
 ## 概念
