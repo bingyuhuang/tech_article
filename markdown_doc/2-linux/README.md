@@ -1,7 +1,7 @@
 ### Linux模块
 [Linux命令大全]( https://www.linuxcool.com/)
 
-目标：每天10个linux命令
+目标：每周30个linux命令
 时间：工作日 12点-12点半 
 
 - [ ] 1.文件管理
