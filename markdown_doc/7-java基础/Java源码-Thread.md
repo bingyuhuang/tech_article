@@ -1,6 +1,6 @@
 ---
 title: Java源码-Thread 
-tags: Java源码
+tags: java源码
 renderNumberedHeading: true
 grammar_cjkRuby: true
 ---
