@@ -112,7 +112,7 @@ static class DefaultThreadFactory implements ThreadFactory {
 
 ## 4.线程池任务执行的主要流程
 
-![enter description here](./images/1587958249484.png)
+![enter description here =400x600](./images/1587958249484.png )
 
 执行方法execute()源码
 
