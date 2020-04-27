@@ -25,8 +25,9 @@ static final int hash(Object key) {
     return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);// 与自己右移16位进行异或运算（高低位异或）
 }
 ```
-![enter description here](./images/1587957921558.png)
-![enter description here](./images/1587957935211.png)
+![enter description here =500x400](./images/1587957921558.png)
+
+![enter description here =500x400](./images/1587957935211.png)
 
 数组定义：数组中的元素成为哈希桶，包含四个字段。hash、key、value、next。next表示链表下个节点。
 
@@ -142,7 +143,7 @@ final Node<K,V> getNode(int hash, Object key) {
 
 #### (1) 新增方法
 
-![enter description here](./images/1587957962936.png)
+![enter description here =600x400](./images/1587957962936.png)
 ```
 public V put(K key, V value) {
     return putVal(hash(key), key, value, false, true);
@@ -234,9 +235,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 ```
 
-
-![enter description here](https://markdown.xiaoshujiang.com/img/spinner.gif "[[[1587958001376]]]" )
-
+![enter description here =500x600](./images/1587958930620.png)
 ```
     public V put(K key, V value) {
        // 对key进行hash操作
@@ -307,7 +306,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 #### (2)扩容方法
 
-![enter description here](./images/1587958015084.png)
+![enter description here =400x600](./images/1587958015084.png)
 
 ```
   final Node<K,V>[] resize() {
@@ -405,7 +404,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 ### 5.JDK1.8HashMap扩容做了哪些优化
 
-![enter description here](./images/1587958035132.png)
+![enter description here =600x300](./images/1587958035132.png)
 
 JDK1.8没有重新计算每个元素的哈希值，而是通过高位运算(hash&oldCap)确定元素是否需要移动，若结果高一位为0位置不变化，高一位为1，位置改变为原下标位置+原数组长度。
 
