@@ -17,7 +17,7 @@ tomcat是应用级服务器软件
 ![tomcat能干啥 =600x300](./images/1589241622841.png)
 Tomcat两个功能：
 - *HTTP服务器*：Socket通信(TCP/IP)。接受请求，解析HTTP报文，传递参数到Servlet服务器
-- *Servlet容器功能*：有多个Servlet(自带Servlet + 自定义Servlet)，Servlet处理具体业务逻辑
+- *Servlet容器*：有多个Servlet(自带Servlet + 自定义Servlet)，Servlet处理具体业务逻辑
 
 **Tomcat架构(架构是为了完成功能需求所做的设计)**
 什么是tomcat架构：为了实现上述功能，Tomcat设计封装了很多组件(Java类)，组件间的关系构成了架构。
