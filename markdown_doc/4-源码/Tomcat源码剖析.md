@@ -51,8 +51,8 @@ tomacat的组件：server-service-connector/container-engine-host-context-wrappe
 - 见名思意：通过方法名称就能联想到方法的作用
 - 多动手实践，灵活使用上述方法技巧
 
-### tomcat实例构建脉络
-#### tomcat源码构建方式
+
+### tomcat源码构建
 1.下载tomcat8.5.5.0，官网下载
 2.tomcat是java开发的软件，使用的时候需要读取server.xml，以及其他配置文件
 ![软件模式和源码模式的区别](./images/1589424334233.png)
@@ -69,5 +69,3 @@ tomacat的组件：server-service-connector/container-engine-host-context-wrappe
 原因是Tomcat源码中jsp引擎没有被初始化，从而无法编译jsp。需要通过jasper引擎将jsp转换成servlet进一步编译处理。解决方法，在tomcat源码中ContextConfig中的configureStart方法中添加一行代码。
 ![初始化jsp引擎 =600x100](./images/1589425771434.png)
 ![启动页面 =600x200](./images/1589427513800.png)
-### servlet请求处理链路
-servlet请求如何被tomcat处理
