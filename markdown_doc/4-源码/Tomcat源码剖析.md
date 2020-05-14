@@ -25,8 +25,17 @@ Tomcat两个功能：
 ![tomcat架构图 =700x400](./images/1589244073852.png)
 
 **套娃式架构和配置文件对应**
-
+tomacat的组件：server-service-connector/container-engine-host-context-wrapper，组件一层套一层的设计方式(套娃设计)，一个组件包含其他组建，这个组件称为容器
+![配置文件 =700x400](./images/1589417130582.png)
+- Server：Server容器代表一个tomcat实例（或者Catalina实例），可以有一个或多个Service容器。
+- Service：提供对外服务，一个可以有多个Connector组件(监听不同的端口请求、解析请求)和一个Servlet容器（具体业务逻辑处理）
+- Engine和host：Engine是核心组件，支持定义多个虚拟机和域名
+- Context：指定web应用程序格式
+- Wrapper：一个对应一个Servlet.
 **套娃时架构设计优点**
+- 一层套一层的方式，组件关系清晰，组件生命周期便于管理
+- tomcat这种架构设计和xml配置中的标签对应上了，便于解读xml以及封装对象的过程中容易对应
+- 便于子容器继承父容器的一些配置
 ### 源码剖析经验
 原则、方法、技巧
 
