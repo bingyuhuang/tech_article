@@ -68,4 +68,5 @@ tomacat的组件：server-service-connector/container-engine-host-context-wrappe
 ![错误详情 =500x300](./images/1589425419863.png)
 原因是Tomcat源码中jsp引擎没有被初始化，从而无法编译jsp。需要通过jasper引擎将jsp转换成servlet进一步编译处理。解决方法，在tomcat源码中ContextConfig中的configureStart方法中添加一行代码。
 ![初始化jsp引擎 =600x100](./images/1589425771434.png)
+8.重启tomcat
 ![启动页面 =600x200](./images/1589427513800.png)
