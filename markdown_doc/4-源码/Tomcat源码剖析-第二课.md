@@ -50,3 +50,10 @@ Tomcat使用Mapper机制重新封装了Host-Context-Wrapper(servlet)之间的数
 具体完成初始化的流程：
 StandardService -> startInternal -> mapperListener.start()完成对mapper对象的初始化。
 
+## 架构师成长路径
+架构师必备能力
+1.扎实的技术基础
+2.开阔的技术视野
+3.拥有业务驱动的思维
+4.拥有数据驱动的思维
+5.问题定位与处理的能力
